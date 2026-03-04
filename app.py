@@ -1,7 +1,13 @@
 import streamlit as st
 from supabase import create_client, Client
-from tokens import supbase_key, supabase_id
 import pandas as pd
+
+# Credenciales: Streamlit Cloud usa st.secrets, localmente cae a tokens.py
+try:
+    supabase_id  = st.secrets["supabase_id"]
+    supbase_key  = st.secrets["supabase_key"]
+except (FileNotFoundError, KeyError):
+    from tokens import supbase_key, supabase_id
 
 # ──────────────────────────────────────────────
 # Configuración de página y conexión
