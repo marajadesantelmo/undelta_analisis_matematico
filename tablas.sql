@@ -246,6 +246,17 @@ INSERT INTO preguntas (enunciado, opcion_a, opcion_b, opcion_c, opcion_d, respue
   'B',
   '(x+2)³ = x³ + 3·x²·2 + 3·x·4 + 8 = x³ + 6x² + 12x + 8. Se usa (a+b)³ = a³ + 3a²b + 3ab² + b³.',
   20
+),
+
+(
+  '¿Cuánto vale 5 / 0?',
+  '0',
+  '5',
+  'Infinito',
+  'No está definido',
+  'D',
+  'La división por cero no está definida en los números reales. No existe ningún número real x tal que 0·x = 5, por lo que la operación carece de resultado. En cálculo, cuando el denominador tiende a 0 se analiza el límite, pero la división exacta por cero nunca tiene valor.',
+  21
 );
 
 -- ============================================================
@@ -318,17 +329,6 @@ INSERT INTO preguntas (enunciado, opcion_a, opcion_b, opcion_c, opcion_d, respue
   'B',
   'Aplicando la regla de potencias d/dx(xⁿ) = n·xⁿ⁻¹: d/dx(x³) = 3·x² . También se puede verificar desde la definición f''(x) = lím(h→0) [(x+h)³−x³]/h expandiendo el binomio.',
   36
-),
-
-(
-  '¿Cuánto vale 5 / 0?',
-  '0',
-  '5',
-  'Infinito',
-  'No está definido',
-  'D',
-  'La división por cero no está definida en los números reales. No existe ningún número real x tal que 0·x = 5, por lo que la operación carece de resultado. En cálculo, cuando el denominador tiende a 0 se analiza el límite, pero la división exacta por cero nunca tiene valor.',
-  37
 ),
 
 (
