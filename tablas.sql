@@ -12,12 +12,6 @@ CREATE TABLE IF NOT EXISTS usuarios (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Insertar usuario administrador inicial
-INSERT INTO usuarios (nombre, dni, email, rol)
-VALUES ('Facundo', '33210626', 'facundo@pymetech.com.ar', 'admin'),
-('Pablo', '38403572', 'pablo.h.veron@gmail.com', 'admin')
-ON CONFLICT (email) DO NOTHING;
-
 -- 2. Tabla de preguntas
 CREATE TABLE IF NOT EXISTS preguntas (
     id BIGSERIAL PRIMARY KEY,
@@ -42,6 +36,63 @@ CREATE TABLE IF NOT EXISTS respuestas (
     created_at TIMESTAMPTZ DEFAULT NOW(),
     UNIQUE (usuario_id, pregunta_id)    -- un estudiante responde cada pregunta una sola vez
 );
+
+-- ============================================================
+-- PERMISOS Y ROW LEVEL SECURITY (RLS)
+-- Ejecutar en el SQL Editor de Supabase si las tablas ya existen.
+-- ============================================================
+
+-- 1. Grants a nivel de tabla para el rol anon (clave pública)
+GRANT SELECT, INSERT        ON usuarios   TO anon;
+GRANT SELECT                ON preguntas  TO anon;
+GRANT SELECT, INSERT, UPDATE ON respuestas TO anon;
+
+-- Grants sobre las secuencias (necesario para INSERT con BIGSERIAL)
+GRANT USAGE, SELECT ON SEQUENCE usuarios_id_seq   TO anon;
+GRANT USAGE, SELECT ON SEQUENCE respuestas_id_seq TO anon;
+
+-- 2. Habilitar RLS en las tres tablas
+ALTER TABLE usuarios   ENABLE ROW LEVEL SECURITY;
+ALTER TABLE preguntas  ENABLE ROW LEVEL SECURITY;
+ALTER TABLE respuestas ENABLE ROW LEVEL SECURITY;
+
+-- 3. Políticas RLS
+-- Limpiar políticas previas si existieran (evita errores de duplicado)
+DROP POLICY IF EXISTS "usuarios: lectura pública"          ON usuarios;
+DROP POLICY IF EXISTS "usuarios: inserción de estudiantes" ON usuarios;
+DROP POLICY IF EXISTS "preguntas: lectura pública"         ON preguntas;
+DROP POLICY IF EXISTS "respuestas: lectura pública"        ON respuestas;
+DROP POLICY IF EXISTS "respuestas: inserción pública"      ON respuestas;
+DROP POLICY IF EXISTS "respuestas: actualización pública"  ON respuestas;
+
+CREATE POLICY "usuarios: lectura pública"
+  ON usuarios FOR SELECT TO anon USING (true);
+
+CREATE POLICY "usuarios: inserción de estudiantes"
+  ON usuarios FOR INSERT TO anon WITH CHECK (rol = 'estudiante');
+
+CREATE POLICY "preguntas: lectura pública"
+  ON preguntas FOR SELECT TO anon USING (true);
+
+CREATE POLICY "respuestas: lectura pública"
+  ON respuestas FOR SELECT TO anon USING (true);
+
+CREATE POLICY "respuestas: inserción pública"
+  ON respuestas FOR INSERT TO anon WITH CHECK (true);
+
+CREATE POLICY "respuestas: actualización pública"
+  ON respuestas FOR UPDATE TO anon USING (true);
+
+-- ============================================================
+-- LIMPIAR DATOS EXISTENTES Y REINSERTAR
+-- ============================================================
+
+TRUNCATE respuestas, preguntas, usuarios RESTART IDENTITY CASCADE;
+
+-- Insertar usuario administrador inicial
+INSERT INTO usuarios (nombre, dni, email, rol)
+VALUES ('Facundo', '33210626', 'facundo@pymetech.com.ar', 'admin'),
+('Pablo', '38403572', 'pablo.h.veron@gmail.com', 'admin');
 
 -- ============================================================
 -- TÉRMINOS Y PROPIEDAD DISTRIBUTIVA (nivel básico)
