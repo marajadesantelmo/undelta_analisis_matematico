@@ -1,4 +1,4 @@
-# 📐 AMI · Ejercicio interactivo en clase
+# 📐 AMI · Ejercicio interactivo en clase 
 
 App en Streamlit para tomar ejercicios en clase de **Análisis Matemático I**. Los estudiantes responden preguntas de opción múltiple y reciben feedback inmediato; el docente accede a estadísticas en tiempo real.
 
